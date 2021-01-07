@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+
+body {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        background-color: rgb(116, 189, 116);
+      }
+ .pet-name {
+   font-size: 32px;
+ }
+
+ .header {
+   padding: 32px;
+ }
+
+ .image-area {
+   padding-left: 16px;
+   background-color: rgb(46, 141, 27) ;
+   display: grid;
+   align-items: center;
+   justify-items: center;
+ }
+
+.interactive-area {
+  padding-left:16px;
+  background-color: lightgreen;
+  /*display: grid;
+  grid-template-rows: 1fr 1fr 1fr;*/
+
+}
+ .main {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+ }
+
+ .pet-image {
+        height: 400px;
+        max-width: 100%;
+        padding: 32px;
+      }
+    
+    .activity-icon{
+      width: 40px;
+      size: 40px;
+      
+      
+    }
+
+    .activity-row{
+      display: grid;
+        grid-template-columns: 1fr 1fr 1fr; 
+        align-items: center;
+        padding: 50px;
+
+    }
+
+    .activity-button{
+      background-color: limegreen;
+      border-radius: 8px;
+      box-shadow: 0 0 5px 0 grey;
+      color: black;
+      cursor:pointer;
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      /* need to figure out why my drink water button is so long and big*/
+    }
+
+
+    .hidden {
+        display: none;}
+
+     
+.endScreen {
+  display: grid;
+  grid-row: 1fr 1fr;
+  padding: 32px;
+      align-items: center;
+      justify-items: center;
+}
+
+.end-game {
+  padding: 32px
+}
+
+.message {
+  padding:32px
+}
+    </style>
+  </head>
+
+  <body>
+
+    <div class= "header">
+      <div class="pet-name">Little Roary</div>
+      <div class="description">This little tiger cub is small and a little tired, take care of him and see him thrive.</div>
+    </div>
+
+    <div class= "main">
+      <div class= "image-area" >
+        <img class="pet-image" id= "pet-image" src='neutral.jpg' />
+      </div>
+
+      <div class= "interactive-area">
+        <div class= "gameScreen">
+        <div id="food-row" class="activity-row" onclick="giveFood()">
+          <img class="activity-icon" src="food.png" />
+          <div class="activity-stat" id="food-stat">50</div>
+          <div class="activity-button">Eat meat</div>
+        </div>
+        <div id="water-row" class="activity-row" onclick="giveWater()">
+          <img class="activity-icon" src="water.png" />
+          <div class="activity-stat" id="water-stat">50</div>
+          <div class="activity-button">Drink water</div>
+        </div>
+        <div id="exercise-row" class="activity-row" onclick="giveExercise()">
+          <img class="activity-icon" src="exercise.jpg" />
+          <div class="activity-stat" id="exercise-stat">50</div>
+          <div class="activity-button">Exercise</div>
+        </div> 
+      </div>
+        <!-- That /div used to be here-->
+     
+        <div class= "endScreen">
+        <div class= "end-game hidden" id= "end-game">
+          <div class="message">Roary has passed out! Restart to try again.</div>
+          <div onclick= "restart()" class="activity-button restart-button">
+            Restart
+          </div>
+        </div>
+      </div>
+  
+  </div>
+</div>
+ <!-- I moved the /div for "interactive-are" to see if that would fix the size problem-->
+  </body>
+  
+  <script>
+
+    var food = 50
+    var water = 50
+    var exercise = 50
+
+    var hasNotPassedOut = true
+
+
+function giveFood() {
+  console.log('Feeding pet!')
+  food+=15
+  console.log('Food')
+  water-=5
+  exercise-=5
+  updateHTML()
+}
+
+function giveWater(){
+  water+=15
+  food-=5
+  exercise-=2
+  console.log('Water')
+  updateHTML()
+}
+
+function giveExercise(){
+  exercise+=30
+  water-=15
+  food-=10
+  updateHTML()
+  console.log('Exercise')
+}
+
+//something wrong here, the image isn't changing
+function updateHTML(){
+document.getElementById("food-stat").innerHTML=food
+document.getElementById("water-stat").innerHTML=water
+document.getElementById("exercise-stat").innerHTML = exercise
+console.log('updateHTML')
+
+var lowestStat = Math.min(food, water, exercise)
+var imageSrc
+
+//think maybe its something that I started doing wrong here?
+if (lowestStat <= 0) {
+        imageSrc = 'passed-out.jpg'
+        if (hasNotPassedOut) {
+          toggleInteractivity()
+          hasNotPassedOut = false
+        }
+        console.log('should be passed out now')
+      } else if (lowestStat < 25) {
+        imageSrc = 'tired.jpg'
+      } else if (lowestStat < 75) {
+        imageSrc = 'neutral.jpg'
+      } else if (lowestStat < 150) {
+        imageSrc = 'walking.jpg'
+      } else {
+        imageSrc = 'exuberant.jpg'
+      }
+console.log('lowest stat picked')
+      //why isn't the image ipdating? (only thing that isn't working)
+      document.getElementById("pet-image").src=imageSrc
+      console.log('new image placed')
+}
+
+
+var agePet = () => {
+      water = water - 8
+      food = food - 4
+      exercise = exercise - 2
+      updateHTML()
+    }
+    setInterval(agePet, 2000)
+
+    var toggleInteractivity = () => {
+      document.getElementById("food-row").classList.toggle("hidden")
+      document.getElementById("water-row").classList.toggle("hidden")
+      document.getElementById("exercise-row").classList.toggle("hidden")
+      document.getElementById("end-game").classList.toggle("hidden")
+    }
+
+    function restart() {
+      food = 50
+      water = 50
+      exercise = 50
+      hasNotPassedOut = true
+      toggleInteractivity()
+      updateHTML() 
+    }
+  </script>
+</html>
